@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spire-oidc-provider
+  namespace: spire
+  labels:
+    app: spire-oidc-provider
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spire-oidc-provider
+  template:
+    metadata:
+      namespace: spire
+      labels:
+        app: spire-oidc-provider
+    spec:
+      serviceAccountName: spire-oidc
+      containers:
+        - name: spire-oidc
+          image: gcr.io/spiffe-io/oidc-discovery-provider:nightly
+          args:
+          - -config
+          - /run/spire/oidc/config/oidc-discovery-provider.conf
+          ports:
+          - containerPort: 443
+            name: spire-oidc-port
+          volumeMounts:
+          - name: spire-agent-socket
+            mountPath: /run/spire/sockets
+            readOnly: true
+          - name: spire-oidc-config
+            mountPath: /run/spire/oidc/config/
+            readOnly: true
+          readinessProbe:
+            exec:
+              command: ["/bin/ps", "aux", " ||", "grep", "oidc-discovery-provider -config /run/spire/oidc/config/oidc-discovery-provider.conf"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: spire-agent-socket
+          hostPath:
+            path: /run/spire/sockets
+            type: DirectoryOrCreate
+        - name: spire-oidc-config
+          configMap:
+            name: oidc-discovery-provider
+  

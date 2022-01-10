@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storefederate-deployment
+  namespace: demok8s
+  labels:
+    app: storefederate
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: storefederate
+  template:
+  #this is the pod spec
+    metadata:
+      labels:
+        app: storefederate
+    spec:
+      serviceAccountName: demo-sa
+      containers:
+      - name: storefederate-container
+        image: acruday.azurecr.io/storefederate:v18
+        ports:
+        - containerPort: 3001
+        env: 
+        - name: FEDERATED_ENVIRONMENT
+          value: k8sMSAL
+        - name: AAD_AUTHORITY
+          value: https://login.microsoftonline.com/
+        - name: BLOB_STORE_ACCOUNT
+          value: demofederate
+        - name: LOG_LEVEL
+          value: debug
+      nodeSelector:
+        kubernetes.io/os: linux

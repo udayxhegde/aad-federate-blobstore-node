@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storefederate-deployment
+  namespace: demo-spiffe
+  labels:
+    app: storefederate
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: storefederate
+  template:
+  #this is the pod spec
+    metadata:
+      labels:
+        app: storefederate
+    spec:
+      serviceAccountName: demo-sa
+      containers:
+      - name: storefederate-container
+        image: acruday.azurecr.io/storefederate:v17
+        ports:
+        - containerPort: 3001
+        volumeMounts:
+          - name: spire-agent-socket
+            mountPath: /run/spire/sockets
+            readOnly: true
+        env: 
+        - name: FEDERATED_ENVIRONMENT
+          value: spiffe
+        - name: AAD_AUTHORITY
+          value: https://login.microsoftonline.com/
+        - name: AZURE_CLIENT_ID
+          value: aead113c-24c6-47e3-93ce-3a7dafc5fd99
+        - name: AZURE_TENANT_ID
+          value: 72f988bf-86f1-41af-91ab-2d7cd011db47
+        - name: BLOB_STORE_ACCOUNT
+          value: demofederate
+        - name: LOG_LEVEL
+          value: debug
+      nodeSelector:
+        kubernetes.io/os: linux
+      volumes:
+        - name: spire-agent-socket
+          hostPath:
+            path: /run/spire/sockets
+            type: DirectoryOrCreate

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: storefederate-api
+  namespace: demok8s
+spec:
+  selector:
+    app: storefederate
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+  type: LoadBalancer
+
+
+# this says we want an external ip on a load balancer, which targets the traffic internally
+# to service port, which targes the traffice internally to the pod targetport
