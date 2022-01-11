@@ -18,7 +18,7 @@ data:
     plugins {
       NodeAttestor "k8s_sat" {
         plugin_data {
-          # NOTE: Change this to your cluster name
+          # TODO: Change this to your cluster name
           # cluster = "demo-cluster"
           cluster = "spire1"
         }

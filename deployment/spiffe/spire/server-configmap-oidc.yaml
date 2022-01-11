@@ -49,7 +49,7 @@ data:
       NodeAttestor "k8s_sat" {
         plugin_data {
           clusters = {
-            # NOTE: Change this to your cluster name
+            # TODO: Change this to your cluster name
             #"demo-cluster" = {
             "spire1" = {
               use_token_review_api_validation = true
