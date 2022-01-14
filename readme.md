@@ -4,8 +4,8 @@ It contains code samples as well as deployment files.
 
 This repo provides samples for the following scenarios, and the FEDERATED_ENVIRONMENT enviroment variable defines which scenarios is executed:
 - Google
-- k8sMSAL
-- k8sAzureIdentity
+- k8sMSAL. This shows how you can use MSAL to get Azure AD tokens
+- k8sAzureIdentity. This shows how you can use Azure Identity SDK to get Azure AD tokens
 - spiffe
 
 The auth folder has the code specific to each scenario.
@@ -14,7 +14,13 @@ For example, when I deploy this in a kubernetes environement and want to use the
 
 If I want to try out the MSAL SDK, I use the deployment/k8s/deployment-msal.yaml
 
-
+## Structure of this repo
+The "src" folder has the client bits with the code to access Azure blob storage using a credential that exchanges a foreign token for an Azure AD token
+The "deployment" folder has all the things you need to deploy this
+- deployment/docker/dockerfile allows you to build an image for this src
+- deployment/spiffe has the yaml files needed to deploy the scenario fully
+- deployment/k8s has the yaml files to deploy using kubernetes tokens
+- deployment/gcp provides a sample yaml files to deploy to Google
 
 ## What is Azure AD Workload identity federation
 
