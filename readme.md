@@ -22,6 +22,9 @@ The "deployment" folder has all the things you need to deploy this
 - deployment/k8s has the yaml files to deploy using kubernetes tokens
 - deployment/gcp provides a sample yaml files to deploy to Google
 
+
+Make sure you finetune the deployment spec for your environment. For example: they contain references to my container repository for the docker image. And they contain references to my blobstore account in Azure.
+
 ## What is Azure AD Workload identity federation
 
 When applications, scripts, or services run in Azure, they can use Azure managed identities to avoid dealing with secrets for Azure AD identities. With Azure managed identities, the secrets are stored and managed by the Azure platform.
