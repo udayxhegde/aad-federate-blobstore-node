@@ -50,6 +50,7 @@ switch (whereRunning) {
         federatedCredential = credential = new awsCredential(clientID, 
                                                              tenantID,
                                                              authority);
+        break;
     case 'k8sMSAL': 
         logger.info("using K8s creds via MSAL");
 
