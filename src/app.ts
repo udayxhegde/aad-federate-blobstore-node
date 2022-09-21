@@ -3,6 +3,7 @@ var logHelper = require("./utils/loghelper");
 import gcpCredential from "./auth/gcpcredential";
 import k8sCredential from "./auth/k8scredential";
 import spiffeCredential from "./auth/spiffecredential";
+import awsCredential from "./auth/awscredential";
 
 import BlobStore from "./blobstore/blobhelper";
 var httpStatus = require('http-status-codes');
@@ -44,6 +45,11 @@ switch (whereRunning) {
                                                             authority);
         break;
 
+    case 'AWS':
+        logger.info("using AWS creds");
+        federatedCredential = credential = new awsCredential(clientID, 
+                                                             tenantID,
+                                                             authority);
     case 'k8sMSAL': 
         logger.info("using K8s creds via MSAL");
 
