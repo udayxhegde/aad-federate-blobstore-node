@@ -37,12 +37,16 @@ class ClientAssertionCredential implements TokenCredential {
         .then((clientAssertion:any)=> {
             logger.debug("client assertion cred, got federated token %o", clientAssertion);
             var msalApp: any;
+            var authParams = {
+                clientId: this.clientID,
+                authority: this.aadAuthority + this.tenantID,
+                clientAssertion: clientAssertion,
+            }
+
+            logger.debug("authParams is %o", authParams);
+            logger.debug("Scopes is %o", scopes);
             msalApp = new msal.ConfidentialClientApplication({
-                auth: {
-                    clientId: this.clientID,
-                    authority: this.aadAuthority + this.tenantID,
-                    clientAssertion: clientAssertion,
-                }
+                auth: authParams
             });
             return msalApp.acquireTokenByClientCredential({ scopes })
         })
