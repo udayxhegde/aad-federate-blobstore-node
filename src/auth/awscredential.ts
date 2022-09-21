@@ -23,7 +23,7 @@ class awsCredential extends FederatedTokenBaseClass {
                             }
                         });
 
-        this.client.send(command)
+        return this.client.send(command)
         .then(function(data:any) {
             logger.debug("aws return is  %o", data);
             logger.debug("aws token is %o", data.Token);
