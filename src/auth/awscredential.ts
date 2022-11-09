@@ -1,6 +1,5 @@
 import FederatedTokenBaseClass from './federatedtokenbaseclass';
 
-
 import { CognitoIdentityClient, GetOpenIdTokenForDeveloperIdentityCommand } from "@aws-sdk/client-cognito-identity"; // ES Modules import
 
 var logger = require("../utils/loghelper").logger;
@@ -9,17 +8,28 @@ require('isomorphic-fetch');
 class awsCredential extends FederatedTokenBaseClass {
     
     client:CognitoIdentityClient;
+    poolId:any;
+    region:any;
+    logins:any;
+    devId:any;
 
     constructor(clientID:string, tenantID:string, aadAuthority:string) {
         super(clientID, tenantID, aadAuthority);   
-        this.client = new CognitoIdentityClient({ region: "us-west-2" }); 
+        this.poolId = process.env.AWS_IDENTITY_POOL_ID;
+        this.region = process.env.AWS_REGION;
+        this.logins = process.env.AWS_LOGINS;
+        this.devId = process.env.AWS_DEVELOPER_ID;
+        this.client = new CognitoIdentityClient({ region: this.region }); 
     }
 
     async getFederatedToken() {
         logger.debug("in aws getfederatedtoken");
-        const command = new GetOpenIdTokenForDeveloperIdentityCommand({IdentityPoolId: "us-west-2:1e2cf987-b9c8-4f2d-a46d-45f26e60fa2a",
+        var logins:any = {};
+        logins[this.logins] = this.devId;
+        
+        const command = new GetOpenIdTokenForDeveloperIdentityCommand({IdentityPoolId: this.poolId,
                             Logins: { 
-                                "aws.workloadidentity" : "aws_user" 
+                                logins
                             }
                         });
 

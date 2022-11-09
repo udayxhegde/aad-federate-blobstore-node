@@ -1,5 +1,6 @@
 const msal = require("@azure/msal-node");
 import {TokenCredential, GetTokenOptions, AccessToken} from "@azure/core-auth"
+import { LogLevel } from "@azure/msal-node";
 import FederatedTokenInterface from './federatedtokenbaseclass';
 
 var logger = require("../utils/loghelper").logger;
@@ -41,12 +42,24 @@ class ClientAssertionCredential implements TokenCredential {
                 clientId: this.clientID,
                 authority: this.aadAuthority + this.tenantID,
                 clientAssertion: clientAssertion,
+                extraQueryParameters: "dc=ESTS-PUB-WUS2-AZ1-FD000-TEST1"
             }
+
+            const msalConfig = {
+                auth: authParams,
+                system: {
+                    loggerCallback: (_level: LogLevel, message: string, _containsPii: boolean): void => {
+                        console.log('MSAL Logging: ', message);
+                    },
+                    piiLoggingEnabled: false,
+                    logLevel: LogLevel.Verbose
+                }
+            };
 
             logger.debug("authParams is %o", authParams);
             logger.debug("Scopes is %o", scopes);
             msalApp = new msal.ConfidentialClientApplication({
-                auth: authParams
+                msalConfig
             });
             return msalApp.acquireTokenByClientCredential({ scopes })
         })
