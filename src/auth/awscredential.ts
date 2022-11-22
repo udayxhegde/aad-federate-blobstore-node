@@ -24,15 +24,14 @@ class awsCredential extends FederatedTokenBaseClass {
 
     async getFederatedToken() {
         logger.debug("in aws getfederatedtoken");
-        var logins:any = {};
-        logins[this.logins] = this.devId;
+        var Logins:any = {};
+        Logins[this.logins] = this.devId;
         
         const command = new GetOpenIdTokenForDeveloperIdentityCommand({IdentityPoolId: this.poolId,
-                            Logins: { 
-                                logins
-                            }
+                            Logins
                         });
 
+        logger.debug("sending command to cognito %o", command);
         return this.client.send(command)
         .then(function(data:any) {
             logger.debug("aws return is  %o", data);

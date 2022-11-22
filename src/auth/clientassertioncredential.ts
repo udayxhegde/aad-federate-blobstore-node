@@ -42,7 +42,6 @@ class ClientAssertionCredential implements TokenCredential {
                 clientId: this.clientID,
                 authority: this.aadAuthority + this.tenantID,
                 clientAssertion: clientAssertion,
-                extraQueryParameters: "dc=ESTS-PUB-WUS2-AZ1-FD000-TEST1"
             }
 
             const msalConfig = {
@@ -58,9 +57,9 @@ class ClientAssertionCredential implements TokenCredential {
 
             logger.debug("authParams is %o", authParams);
             logger.debug("Scopes is %o", scopes);
-            msalApp = new msal.ConfidentialClientApplication({
+            msalApp = new msal.ConfidentialClientApplication(
                 msalConfig
-            });
+            );
             return msalApp.acquireTokenByClientCredential({ scopes })
         })
         // 
