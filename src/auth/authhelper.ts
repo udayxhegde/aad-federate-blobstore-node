@@ -79,9 +79,13 @@ function init() {
 
             let credOptions:ClientCertificateCredentialOptions = {authorityHost: authority};
 
+            //
+            // send the callback function for getting a federated token
+            // Since it belongs to a class, make sure we bind it first so that the function
+            // can still access the class instance variables
             credential = new ClientAssertionCredential( tenantID,
                 clientID,
-                federatedToken.getFederatedToken,
+                federatedToken.getFederatedToken.bind(federatedToken),
                 credOptions);
         }
     }
