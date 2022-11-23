@@ -1,8 +1,7 @@
 var pino = require('pino');
-const pinoLogger = pino({
-    prettyPrint: { colorize: true }
-});
+var pretty = require('pino-pretty')
 
+var pinoLogger = pino(pretty({ colorize: true }));
 
 function init(app:any) {
     //

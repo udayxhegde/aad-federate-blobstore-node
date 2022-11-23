@@ -1,17 +1,22 @@
-import FederatedTokenBaseClass from './federatedtokenbaseclass';
+import FederatedToken from './federatedtoken';
 var fs = require("fs");
 var logger = require("../utils/loghelper").logger;
 
 
-class k8sCredential extends FederatedTokenBaseClass {
+class k8sToken extends FederatedToken {
     
     
-    constructor(clientID:string, tenantID:string, aadAuthority:string) {
-        super(clientID, tenantID, aadAuthority);
+    constructor() {
+        super();
+        if (!process.env.AZURE_FEDERATED_TOKEN_FILE) {
+            throw (new Error("k8s token environment not setup correctly"));
+        }
     }
 
     async getFederatedToken() {
         return new Promise<any>(function(resolve, reject) {
+            //
+            // The K8s token is in a file location, read it and return.
             fs.readFile(process.env.AZURE_FEDERATED_TOKEN_FILE, "utf8", function(err:any, data:string) {
                 if (err) {
                     logger.error("k8s token error %o", err);
@@ -26,4 +31,4 @@ class k8sCredential extends FederatedTokenBaseClass {
     }
 }
 
-export default k8sCredential;
+export default k8sToken;

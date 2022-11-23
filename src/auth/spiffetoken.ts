@@ -1,4 +1,4 @@
-import FederatedTokenBaseClass from './federatedtokenbaseclass';
+import FederatedToken from './federatedtoken';
 var logger = require("../utils/loghelper").logger;
 
 const grpc = require('@grpc/grpc-js');
@@ -13,11 +13,11 @@ const workloadApiDef = protoLoader.loadSync(__dirname + '/../utils/workloadapi.p
 });
 
 
-class spiffeCredential extends FederatedTokenBaseClass {
+class spiffeToken extends FederatedToken {
     grpcClient:any;
-    constructor(clientID:string, tenantID:string, aadAuthority:string) {
+    constructor() {
         //const socketPath = process.env.SOCKET_PATH;
-        super(clientID, tenantID, aadAuthority);
+        super();
 
         const spiffeProto = grpc.loadPackageDefinition(workloadApiDef);
 
@@ -45,4 +45,4 @@ class spiffeCredential extends FederatedTokenBaseClass {
     }
 }
 
-export default spiffeCredential;
+export default spiffeToken;

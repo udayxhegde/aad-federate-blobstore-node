@@ -1,15 +1,12 @@
 const express = require("express");
 var logHelper = require("./utils/loghelper");
-import gcpCredential from "./auth/gcpcredential";
-import k8sCredential from "./auth/k8scredential";
-import spiffeCredential from "./auth/spiffecredential";
-import awsCredential from "./auth/awscredential";
+var authHelper = require("./auth/authhelper");
+
 
 import BlobStore from "./blobstore/blobhelper";
 var httpStatus = require('http-status-codes');
 var jwt = require("jsonwebtoken");
 
-import { DefaultAzureCredential, EnvironmentCredential } from "@azure/identity";
 
 const logger = logHelper.logger;
 
@@ -28,61 +25,8 @@ logHelper.init(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-var whereRunning:any = process.env.FEDERATED_ENVIRONMENT;
-var federatedCredential:any = null;
-var credential:any = null;
+let credential = authHelper.init();
 
-var clientID:any = process.env.AZURE_CLIENT_ID;
-var tenantID:any = process.env.AZURE_TENANT_ID;
-var authority:any = process.env.AAD_AUTHORITY;
-
-switch (whereRunning) {
-    case 'Google':
-        logger.info("using gcp creds");
-
-        federatedCredential = credential = new gcpCredential(clientID,
-                                                            tenantID,
-                                                            authority);
-        break;
-
-    case 'AWS':
-        logger.info("using AWS creds");
-        federatedCredential = credential = new awsCredential(clientID, 
-                                                             tenantID,
-                                                             authority);
-        break;
-    case 'k8sMSAL': 
-        logger.info("using K8s creds via MSAL");
-
-        federatedCredential = credential = new k8sCredential(clientID,
-                                                            tenantID,
-                                                            authority);
-        break;
-
-    case 'k8sAzureIdentity':
-        logger.info("using DefaultAzure creds for k8sAzureIdentity");
-
-        credential = new DefaultAzureCredential();
-        break;
-
-    case 'spiffe':
-        logger.info("using spiffecredential");
-        federatedCredential = credential = new spiffeCredential(clientID,
-                                                                tenantID,
-                                                                authority);
-        break;
-        
-  
-    case 'local':
-        logger.info("using env creds for local");
-        credential = new EnvironmentCredential();
-        break;
-
-    default:
-        logger.info("error: no credentials for %o", whereRunning);
-        break;
-
-}
 logger.info("initialize store with cred %o", credential);                                        
 var blobAccount:any = process.env.BLOB_STORE_ACCOUNT;
 
@@ -119,11 +63,11 @@ app.post('/:container/:name', (req:any, res:any) => {
 });
 
 app.get('/issued', (req:any, res:any) => {
-    if (federatedCredential == null) {
+    if (authHelper.federatedToken == null) {
         res.status(httpStatus.BAD_REQUEST).send("not federated credential");
         return;
     }
-    federatedCredential.getFederatedToken()
+    authHelper.federatedToken.getFederatedToken()
     .then (function(response:any) {
         logger.info(response);
         var decoded = jwt.decode(response, {complete : true});

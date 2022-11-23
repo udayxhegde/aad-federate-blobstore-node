@@ -1,14 +1,14 @@
-import FederatedTokenBaseClass from './federatedtokenbaseclass';
+import FederatedToken from './federatedtoken';
 
 var logger = require("../utils/loghelper").logger;
 require('isomorphic-fetch');
 
-class gcpCredential extends FederatedTokenBaseClass {
+class gcpToken extends FederatedToken {
     
-    super(clientID:string, tenantID:string, aadAuthority:string) {
-        this.super.constructor(clientID, tenantID, aadAuthority);    
+    constructor() {
+        super();   
     }
-
+  
     async getFederatedToken() {
         const headers = new Headers();
 
@@ -41,4 +41,4 @@ class gcpCredential extends FederatedTokenBaseClass {
     }
 }
 
-export default gcpCredential;
+export default gcpToken;

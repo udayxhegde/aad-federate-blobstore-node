@@ -1,17 +1,16 @@
-const msal = require("@azure/msal-node");
 import {TokenCredential, GetTokenOptions, AccessToken} from "@azure/core-auth"
-import { LogLevel } from "@azure/msal-node";
-import FederatedTokenInterface from './federatedtokenbaseclass';
+import { LogLevel, ConfidentialClientApplication} from "@azure/msal-node";
+import FederatedToken from './federatedtoken';
 
 var logger = require("../utils/loghelper").logger;
 
-class ClientAssertionCredential implements TokenCredential {
+class msalClientAssertionCredential implements TokenCredential {
     clientID:string;
     tenantID: string;
     aadAuthority: string;
-    federatedToken:FederatedTokenInterface;
+    federatedToken:FederatedToken;
 
-    constructor(clientID:string, tenantID:string, aadAuthority:string, federatedToken:FederatedTokenInterface) {
+    constructor(clientID:string, tenantID:string, aadAuthority:string, federatedToken:FederatedToken) {
         this.clientID = clientID;
         this.tenantID = tenantID;
         this.aadAuthority = aadAuthority;
@@ -44,7 +43,7 @@ class ClientAssertionCredential implements TokenCredential {
                 clientAssertion: clientAssertion,
             }
 
-            const msalConfig = {
+            const msalConfig:any = {
                 auth: authParams,
                 system: {
                     loggerCallback: (_level: LogLevel, message: string, _containsPii: boolean): void => {
@@ -57,7 +56,7 @@ class ClientAssertionCredential implements TokenCredential {
 
             logger.debug("authParams is %o", authParams);
             logger.debug("Scopes is %o", scopes);
-            msalApp = new msal.ConfidentialClientApplication(
+            msalApp = new ConfidentialClientApplication(
                 msalConfig
             );
             return msalApp.acquireTokenByClientCredential({ scopes })
@@ -82,5 +81,5 @@ class ClientAssertionCredential implements TokenCredential {
         });
     }
 }
-export default ClientAssertionCredential;
+export default msalClientAssertionCredential;
 
